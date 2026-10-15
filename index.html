@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MPSC Padel League</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Padel League">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#071B3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+html,body{margin:0;height:100%;background:#EEF2F8;overflow:hidden}
+iframe{position:fixed;left:0;top:0;width:100%;height:100vh;border:0}
+#probe{position:fixed;left:0;bottom:0;width:1px;height:0;padding-bottom:env(safe-area-inset-bottom);visibility:hidden}
+#msg{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#888;font:600 18px system-ui,sans-serif;z-index:-1}
+</style></head>
+<body>
+<div id="msg">MPSC Padel League…</div>
+<div id="probe"></div>
+<script>
+// Link dell'app Google (finisce con /exec). Se lo cambi, aggiornalo qui.
+var APP = 'https://script.google.com/macros/s/AKfycbyyRGVShCva90j7-u1ccRV8USE6eBuQkUainy_sePwDqLEtsDYKvDCrAR01rF_LxoVP/exec';
+var f = document.createElement('iframe');
+f.src = APP;
+f.setAttribute('allow', 'clipboard-write');
+document.body.appendChild(f);
+// l'iframe riempie lo schermo e lascia libero solo lo spazio della barra Home dell'iPhone
+function misura() {
+  var sotto = document.getElementById('probe').offsetHeight || 0;
+  f.style.height = Math.max(200, window.innerHeight - sotto) + 'px';
+}
+misura();
+window.addEventListener('resize', misura);
+window.addEventListener('orientationchange', function () { setTimeout(misura, 300); });
+</script>
+</body></html>
