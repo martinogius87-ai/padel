@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MPSC Padel League</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Padel League">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#071B3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:linear-gradient(#071B3E 50%,#EEF2F8 50%)}
+iframe{position:fixed;left:0;top:0;width:100%;height:calc(100% - env(safe-area-inset-bottom));border:0;background:#EEF2F8}
+#msg{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#888;font:600 18px system-ui,sans-serif;z-index:-1}
+#avviso{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translateX(-50%);background:rgba(7,27,62,.92);color:#fff;font:600 13px system-ui,sans-serif;padding:7px 14px;border-radius:20px;z-index:5;display:none}
+</style></head>
+<body>
+<div id="msg">MPSC Padel League…</div>
+<div id="avviso"></div>
+<script>
+// Link dell'app Google (finisce con /exec). Se lo cambi, aggiornalo qui.
+var APP = 'https://script.google.com/macros/s/AKfycbyyRGVShCva90j7-u1ccRV8USE6eBuQkUainy_sePwDqLEtsDYKvDCrAR01rF_LxoVP/exec';
+// Memoria nella pagina esterna: iOS cancella quella dentro l'app Google.
+// L'app invia qui giocatore e accesso admin, e a ogni apertura li riceve nel link (?me= e ?adm=).
+var ST = {
+  get: function (k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
+  set: function (k, v) { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) {} }
+};
+var q = [], me = ST.get('mpsc_giocatore'), adm = ST.get('mpsc_admin');
+if (me) q.push('me=' + encodeURIComponent(me));
+if (adm) q.push('adm=' + encodeURIComponent(adm));
+var tt = 0;
+function avviso(t) {
+  var x = document.getElementById('avviso');
+  x.textContent = t; x.style.display = 'block';
+  clearTimeout(tt); tt = setTimeout(function () { x.style.display = 'none'; }, 2500);
+}
+window.addEventListener('message', function (e) {
+  // accetta solo i riquadri Google (l'origine può risultare "null" nei riquadri protetti)
+  if (e.origin !== 'null' && !/^https:\/\/([a-z0-9-]+\.)*(googleusercontent|google)\.com$/.test(e.origin)) return;
+  var d = e.data;
+  if (!d || d.mpsc !== 1 || (d.k !== 'mpsc_giocatore' && d.k !== 'mpsc_admin')) return;
+  ST.set(d.k, String(d.v || ''));
+  if (d.v) avviso(d.k === 'mpsc_admin' ? 'Accesso admin salvato' : 'Giocatore salvato');
+});
+var f = document.createElement('iframe');
+f.src = APP + (q.length ? '?' + q.join('&') : '');
+f.setAttribute('allow', 'clipboard-write');
+document.body.appendChild(f);
+</script>
+</body></html>
